@@ -79,6 +79,35 @@ public class MorseCodeII {
         put("--..", 'z');
     }};
 
+    //     Map<String, Character> dic = new HashMap<>();
+//     // URL url = new URL("https://www.stackabuse.com");
+//     StringBuilder content;
+
+//    try {
+//         URL url = new URL("https://gist.githubusercontent.com/ewolak-sq/5af616730b072c5ed5eb50a12270fdf5/raw/b40a1b6b208a8718a3873eb33c768866077bac45/morse_alphabet.txt");
+//       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+//       connection.setRequestMethod("GET");
+
+//       // Get the input stream of the connection
+//       try (BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+//           String line;
+//           content = new StringBuilder();
+//           while ((line = input.readLine()) != null) {
+//               // split each line by space
+//               String[] splited = line.split(" ");
+//               dic.put(splited[1], splited[0].charAt(0));
+//           }
+//       } finally {
+//           connection.disconnect();
+//       }
+
+//       System.out.println(dic);
+//     }
+//     catch(Exception e) {
+//         //  Block of code to handle errors
+//     }
+
     public static String encode(int[] input) {
         // assume input is not null
         StringBuilder sb = new StringBuilder();
