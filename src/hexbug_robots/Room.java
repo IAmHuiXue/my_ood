@@ -1,10 +1,11 @@
 package hexbug_robots;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Room {
-    private static final Random random = new Random();
-    private final Character[][] floor;
+    private static final Random RANDOM = new Random();
+    private final int[][] floor;
     private final int rows;
     private final int cols;
     private State state; // to represent the status of the robot
@@ -29,14 +30,9 @@ public class Room {
         if (x <= 0 || y <= 0) {
             throw new IllegalArgumentException("Invalid room size");
         }
-        floor = new Character[x][y];
+        floor = new int[x][y];
         rows = x;
         cols = y;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                floor[i][j] = '0';
-            }
-        }
     }
 
     public boolean placeHexBug(HexBug robot, int x, int y, Dir direction) {
@@ -79,9 +75,9 @@ public class Room {
             int neiX = state.row + state.direction.getX();
             int neiY = state.col + state.direction.getY();
             if (isInvalidPosition(neiX, neiY)) {
-                int pick = random.nextInt(Dir.values().length);
+                int pick = RANDOM.nextInt(Dir.values().length);
                 while (Dir.values()[pick] == state.direction) {
-                    pick = random.nextInt(Dir.values().length);
+                    pick = RANDOM.nextInt(Dir.values().length);
                 }
                 state.direction = Dir.values()[pick];
             } else {
