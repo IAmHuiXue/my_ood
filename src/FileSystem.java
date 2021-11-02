@@ -1,6 +1,21 @@
 
 import java.util.*;
 
+// Main Functionalities:
+//        1. files, directories -> a directory contains files/sub-directories
+//        2. metadata of files/directories: name, creation time, access time, modification time, etc.
+//        3. operation: create, move, delete, update, etc.
+//
+// Design:
+//
+//        A file system can be modeled as a tree consisting of files/directories
+//        - leaf nodes: files or empty directories
+//        - how to count the total number of files/directories?
+//
+// Type
+//        - file: content
+//        - directory: can have other files/directories
+
 public class FileSystem {
     private final Directory root;
     private Directory current;
