@@ -13,6 +13,4 @@ public class HexBug {
         }
         this.moveDistance = moveDistance;
     }
-
-
 }
