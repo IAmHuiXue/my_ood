@@ -1,0 +1,32 @@
+Use cases:
+
+1. add new books into the system
+2. user can borrow books
+3. user can return books
+4. System can track each book's due date
+5. user can have membership with the library
+
+
+
+Classes:
+
+Book
+
+User
+
+Membership (member interface - reserve, borrow, return)
+
+Catalog for search and inventory management;
+
+Reservation
+
+Transaction
+
+Library
+
+    API:
+        reserve a book (membership) - returns reservation record or raise exception
+        borrow a book (membership) - returns transaction record or raise exception
+        search a book by title (String title) - List<BookItem>
+        create membership (user) - returns membership record. with default expiry date
+        get membership by user - return membership record

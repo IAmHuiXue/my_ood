@@ -30,16 +30,21 @@ public class FileSystem {
      * resolve a path like /foo/bar
      */
     private List<Entry> resolve(String path) {
+        // the path passed in here should be like:
+        //  /a/b/c or /a/b/c/
+        //  a/b or a/b/
+        // and each component should be a Directory, not a File
+
         String[] names = path.split("/");
-        if (path.charAt(0) == '/') {
+        if (path.charAt(0) == '/') { // /a/b
             // go from root
-            return search(root, names);
-        }
+            return resolve(root, names);
+        }  // b/a
         // go from current
-        return search(current, names);
+        return resolve(current, names); // ! issue
     }
 
-    private List<Entry> search(Entry entry, String[] names) {
+    private List<Entry> resolve(Entry entry, String[] names) {
         List<Entry> res = new ArrayList<>();
         res.add(entry);
         for (String component : names) {
@@ -62,7 +67,7 @@ public class FileSystem {
         // String[] names = path.split("/");
         String name = path.substring(path.lastIndexOf('/') + 1);
         final Directory parent = (Directory) entries.get(entries.size() - 2);
-        Directory newD = new Directory(name,parent);
+        Directory newD = new Directory(name, parent);
         parent.addEntry(newD);
     }
 
