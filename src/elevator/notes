@@ -1,0 +1,55 @@
+Clarify:
+
+Basic Functions: transport users from a floor to another one (p0)
+The status of the elevator: idle, moving up, moving down and it can only open the door when it is idle (p0)
+The num of elevators vs the num of the floors (p2)
+    - 分奇偶层， 一般楼梯奇数楼，一般偶数
+    - 分1-10层一个电梯，11-20一个电梯
+    - 车库一个电梯
+    - 分不同类别电梯，货运，人运
+The size of the elevator cab, max load, max user amount (p0)
+How to coordinate/optimize the dispatchering algo (p1)
+Alert button, Emergency button (p2)
+The category of elevators - for goods, for people.. (p3)
+Monitoring system (p3)
+
+
+Define class (Core Objects)
+
+ElevatorSystem
+ElevatorCab
+Floor
+Door
+ButtonPanel (inside, outside)
+Dispatcher
+Monitoring/Alarm
+
+Define fields (Properties)
+
+ElevatorSystem
+ - List<ElevatorCab>
+ - ElevatorCab[]
+
+ElevatorCab
+ - state
+
+Button
+ - external/internal
+ - floor map button
+ - up/down button
+
+
+Define Methods (how data flow works)
+
+external button is pressed so an external request is passed
+
+elevator system dispatches the request to target elevator using a certain algo
+
+the assigned elevator moves towards customer
+
+open gate, close gate
+
+move to the target floor
+
+open gate, close gate
+
