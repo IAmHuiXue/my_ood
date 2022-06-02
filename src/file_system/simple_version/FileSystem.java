@@ -63,32 +63,32 @@ class File extends Entry {
 
 class Directory extends Entry {
     // using a map help faster index the actual entry by their name
-    Map<String, Entry> entries;
+    Map<String, Entry> contents;
 
     public Directory(String name, Directory parent) {
         super(name, parent);
-        entries = new HashMap<>();
+        contents = new HashMap<>();
     }
 
     public List<Entry> getContents() {
-        return new ArrayList<>(entries.values());
+        return new ArrayList<>(contents.values());
     }
 
     public int size() {
         int size = 0;
-        for (Entry e : entries.values()) {
+        for (Entry e : contents.values()) {
             size += e.size();
         }
         return size;
     }
 
     public Entry getChild(String name) {
-        return entries.get(name);
+        return contents.get(name);
     }
 
     public int numberOfFiles() {
         int count = 0;
-        for (Entry e : entries.values()) {
+        for (Entry e : contents.values()) {
             if (e instanceof Directory) {
                 count += ((Directory) e).numberOfFiles(); // count the sub-dir itself
             }
@@ -101,13 +101,13 @@ class Directory extends Entry {
         if (entry == null) {
             return false;
         }
-        Entry e = entries.remove(entry.name);
+        Entry e = contents.remove(entry.name);
         return e != null;
     }
 
     public void addEntry(Entry entry) {
         if (entry != null) {
-            entries.put(entry.name, entry);
+            contents.put(entry.name, entry);
         }
     }
 }
@@ -119,41 +119,51 @@ public class FileSystem {
         root = new Directory("/", null);
     }
 
+    private String[] resolvePath(String path) {
+        return path.substring(1).split("/"); // exclude the root level
+    }
+
     public void mkdir(String path) {
         Directory e = root;
-        String[] dirs = path.split("/");
-        for (int i = 1; i < dirs.length; i++) {
-            e.entries.putIfAbsent(dirs[i], new Directory(dirs[i], e));
-            e = (Directory) e.entries.get(dirs[i]);
+        String[] dirs = resolvePath(path);
+        for (String dir : dirs) {
+            e.contents.putIfAbsent(dir, new Directory(dir, e)); // create one if not found along the way
+            e = (Directory) e.contents.get(dir);
         }
     }
 
-    public void createFile(String path) {
+    public void createFile(String path) { // a valid path should be: /dir1/dir2/dir3/fileName
         Directory e = root;
-        String[] dirs = path.split("/");
-        for (int i = 1; i < dirs.length - 1; i++) {
-            e.entries.putIfAbsent(dirs[i], new Directory(dirs[i], e));
-            e = (Directory) e.entries.get(dirs[i]);
+        String[] dirs = resolvePath(path);
+        for (int i = 0; i < dirs.length - 1; i++) {
+            e.contents.putIfAbsent(dirs[i], new Directory(dirs[i], e));
+            e = (Directory) e.contents.get(dirs[i]);
         }
+        // now e is the last dir, which is going to be the parent of the new file
         e.addEntry(new File(dirs[dirs.length - 1], e, 0));
     }
 
     public void delete(String path) {
         Directory e = root;
-        String[] dirs = path.split("/");
-        for (int i = 1; i < dirs.length; i++) {
-            e.entries.putIfAbsent(dirs[i], new Directory(dirs[i], e));
-            e = (Directory) e.entries.get(dirs[i]);
+        String[] dirs = resolvePath(path);
+        for (String dir : dirs) {
+            e = (Directory) e.getChild(dir);
+            if (e == null) {
+                throw new IllegalArgumentException("Invalid path.");
+            }
         }
         e.delete();
     }
 
     public List<Entry> list(String path) {
         Directory e = root;
-        String[] dirs = path.split("/");
-        if (!path.equals("/")) {
-            for (int i = 1; i < dirs.length; i++) {
-                e = (Directory) e.getChild(dirs[i]);
+        String[] dirs = resolvePath(path);
+        if (dirs.length != 0) {
+            for (String dir : dirs) {
+                e = (Directory) e.getChild(dir);
+                if (e == null) {
+                    throw new IllegalArgumentException("Invalid path.");
+                }
             }
         }
         return e.getContents();

@@ -103,6 +103,7 @@ class TicTacToeBoard implements GameBoard {
         rows[move.row] += sign;
         occupied++;
         int sum = board.length;
+        // apply the rule -> row | col | diag has the board.length num of one player (board.length | -board.length)
         if (cols[move.col] == Math.abs(sum)
                 || rows[move.row] == Math.abs(sum)
                 || antiDiag == Math.abs(sum)
@@ -110,6 +111,7 @@ class TicTacToeBoard implements GameBoard {
             winner = player;
             return 1;
         }
+        // if the board has been fully filled
         if (occupied == sum * sum) {
             return 0; // tied
         }

@@ -10,7 +10,7 @@ public class Twitter {
     // when we execute getNewsFeed(userId)
     // the reason is, when we get all the lists of tweets from the people, we just
     // need to offer the tweet_head of each list into the minHeap for operations
-    private class Tweet {
+    private static class Tweet {
         private static long timeStamp = 0;
         public int id;
         public long creationTime;
@@ -23,7 +23,7 @@ public class Twitter {
         }
     }
 
-    public class User {
+    public static class User {
         public int id;
         public Set<Integer> following;
         public Tweet mostRecentTweet;
@@ -47,6 +47,10 @@ public class Twitter {
             t.next = mostRecentTweet;
             mostRecentTweet = t;
         }
+
+        boolean hasNoPost() {
+            return mostRecentTweet == null;
+        }
     }
 
     public Twitter() {
@@ -63,21 +67,25 @@ public class Twitter {
     // the largest timeStamp from the heap, then we add its next tweet into the heap.
     // So after adding all heads we only need to add 9 tweets at most into this
     // heap before we get the 10 most recent tweets.
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users
+     * who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
     public List<Integer> getNewsFeed(int userId) {
         List<Integer> res = new ArrayList<>();
         User u = userIndices.get(userId);
         if (u == null) {
             return res;
         }
-        Set<Integer> followees = u.following;
-        PriorityQueue<Tweet> pq = new PriorityQueue<>(followees.size(), (a, b) -> Long.compare(b.creationTime, a.creationTime));
-        for (int followee : followees) {
-            Tweet mostRecentTweet = userIndices.get(followee).mostRecentTweet;
-            // important, if we add null to the head we are screwed
-            if (mostRecentTweet != null) {
-                pq.offer(mostRecentTweet);
+        Set<Integer> followeeIds = u.following;
+        PriorityQueue<Tweet> pq = new PriorityQueue<>(followeeIds.size(), (a, b) -> Long.compare(b.creationTime, a.creationTime));
+        for (int followeeId : followeeIds) {
+            User followee = userIndices.get(followeeId);
+            if (followee.hasNoPost()) {
+                continue;
             }
+            Tweet mostRecentTweet = followee.mostRecentTweet;
+            pq.offer(mostRecentTweet);
         }
+
         int num = 0;
         while (!pq.isEmpty() && num++ < LIMIT) {
             Tweet latestTweet = pq.poll();

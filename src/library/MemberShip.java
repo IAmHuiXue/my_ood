@@ -7,5 +7,7 @@ public interface MemberShip {
 
     void returnBack(BookItem book) throws FineRequiredException;
 
+    void unReserve(BookItem book) throws FineRequiredException;
+
     boolean payFine();
 }

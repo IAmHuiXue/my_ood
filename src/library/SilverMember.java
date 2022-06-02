@@ -3,7 +3,7 @@ package library;
 import java.util.*;
 
 public class SilverMember implements MemberShip {
-    private final int MAX_ALLOWED_ITEMS = 5;
+    private final static int MAX_ALLOWED_ITEMS = 5;
     private Map<BookItem, Transaction> borrows;
     private Map<BookItem, Reservation> reserves;
     private List<Record> archives;
@@ -24,6 +24,7 @@ public class SilverMember implements MemberShip {
         Transaction record = new Transaction(book, this);
         book.borrow();
         borrows.put(book, record);
+        unReserve(book); // in case the book was reserved by 'this'
         return record;
     }
 
@@ -53,13 +54,29 @@ public class SilverMember implements MemberShip {
     }
 
     @Override
+    public void unReserve(BookItem book) {
+        Reservation record = reserves.remove(book);
+        if (record == null) {
+            throw new IllegalArgumentException("No such a book reserved.");
+        }
+        archives.add(record);
+        book.makeAvailable();
+    }
+
+    @Override
     public boolean payFine() {
         // todo:
         return true;
     }
 
     private boolean canBorrow(BookItem book) {
-        return book.canBorrow() && borrows.size() < MAX_ALLOWED_ITEMS;
+        if (borrows.size() >= MAX_ALLOWED_ITEMS) {
+            return false;
+        }
+        if (reserves.containsKey(book)) { // if the book is reserved by 'this'
+            return true;
+        }
+        return book.canBorrow();
     }
 
     private boolean canReserve(BookItem book) {

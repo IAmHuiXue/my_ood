@@ -16,24 +16,32 @@ reserve a book (membership) - returns reservation record or raise exception
 public class Library {
     private Map<Integer, MemberShip> members;  // user id - > membership
     private Map<String, List<MemberShip>> records; // user name -> membership
-    private Map<BookItem, Transaction> lendHistory;
-    private Map<BookItem, Reservation> reserveHistory;
+    private Map<BookItem, Transaction> activeLendRecords;
+    private Map<BookItem, Reservation> activeReserveRecords;
     private final Catalog catalog;
 
     public Library(List<BookItem> books) {
         this.catalog = new Catalog(books);
         this.members = new HashMap<>();
         this.records = new HashMap<>();
-        this.lendHistory = new HashMap<>();
-        this.reserveHistory = new HashMap<>();
+        this.activeLendRecords = new HashMap<>();
+        this.activeReserveRecords = new HashMap<>();
     }
 
     public Transaction lend(BookItem bookItem, MemberShip memberShip) {
         Transaction transaction = memberShip.borrow(bookItem);
         if (transaction != null) {
-            lendHistory.put(bookItem, transaction);
+            activeLendRecords.put(bookItem, transaction);
         }
         return transaction;
+    }
+
+    public Reservation reserve(BookItem bookItem, MemberShip memberShip) {
+        Reservation reservation = memberShip.reserve(bookItem);
+        if (reservation != null) {
+            activeReserveRecords.put(bookItem, reservation);
+        }
+        return reservation;
     }
 
     public List<BookItem> searchByTitle(String title) {
@@ -46,7 +54,7 @@ public class Library {
 
     public void returnBack(BookItem bookItem, MemberShip memberShip) throws FineRequiredException {
         memberShip.returnBack(bookItem);
-        lendHistory.remove(bookItem);
+        activeLendRecords.remove(bookItem);
     }
 
     public MemberShip join(User user) {

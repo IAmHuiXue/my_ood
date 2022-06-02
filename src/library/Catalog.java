@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Catalog {
-    private Map<String, List<BookItem>> records;
+    private Map<String, List<BookItem>> records;  // title, -> bookItems
     private Map<String, BookItem> recordsByCode;  // barcode -> bookItem
 
     public Catalog(List<BookItem> books) {

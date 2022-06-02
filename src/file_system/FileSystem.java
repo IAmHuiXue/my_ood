@@ -3,7 +3,7 @@ package file_system;
 import java.util.*;
 
 // Main Functionalities:
-//        1. files, directories -> a directory contains files/sub-directories
+//        1. files, directories -> a directory contains files/subdirectories
 //        2. metadata of files/directories: name, creation time, access time, modification time, etc.
 //        3. operation: create, move, delete, update, etc.
 //
@@ -31,17 +31,18 @@ public class FileSystem {
      */
     private List<Entry> resolve(String path) {
         // the path passed in here should be like:
-        //  /a/b/c or /a/b/c/
-        //  a/b or a/b/
+        //  /a/b/c or /a/b/c/ absolute path
+        //  a/b or a/b/       relative path
         // and each component should be a Directory, not a File
 
-        String[] names = path.split("/");
         if (path.charAt(0) == '/') { // /a/b
             // go from root
+            String[] names = path.substring(1).split("/");
             return resolve(root, names);
         }  // b/a
         // go from current
-        return resolve(current, names); // ! issue
+        String[] names = path.split("/");
+        return resolve(current, names);
     }
 
     private List<Entry> resolve(Entry entry, String[] names) {
@@ -51,7 +52,7 @@ public class FileSystem {
             if (!(entry instanceof Directory)) {
                 throw new IllegalArgumentException("Invalid path");
             }
-            if (!component.isEmpty()) {
+            if (!component.isEmpty()) { // to take care of paths end with '/'
                 entry = ((Directory) entry).getEntry(component);
                 res.add(entry);
             }

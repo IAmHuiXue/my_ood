@@ -69,9 +69,9 @@ public class SudokuSolver2 {
                 }
             }
             return false;
-        } else {
-            return solveBoard(nextRow, nextCol);
         }
+        return solveBoard(nextRow, nextCol);
+
     }
 
     public void printBoard() {

@@ -4,14 +4,14 @@ import java.util.Calendar;
 
 public class BookItem extends Book {
     private final String barCode;
-    private boolean borrowed;
+    private Status status;
     private Calendar borrowedTime;
-    private boolean reserved;
     private Calendar reservedTime;
 
     public BookItem(String title, String barCode) {
         super(title);
         this.barCode = barCode;
+        this.status = Status.AVAILABLE;
     }
 
     public boolean borrow() {
@@ -19,7 +19,7 @@ public class BookItem extends Book {
             return false;
         }
         this.borrowedTime = Calendar.getInstance();
-        this.borrowed = true;
+        this.status = Status.BORROWED;
         return true;
     }
 
@@ -28,16 +28,16 @@ public class BookItem extends Book {
             return false;
         }
         this.reservedTime = Calendar.getInstance();
-        this.reserved = true;
+        this.status = Status.RESERVED;
         return true;
     }
 
     public boolean canBorrow() {
-        return !this.borrowed;
+        return this.status.equals(Status.AVAILABLE);
     }
 
     public boolean canReserve() {
-        return !this.reserved;
+        return canBorrow();
     }
 
     public String getBarCode() {
@@ -45,9 +45,8 @@ public class BookItem extends Book {
     }
 
     public void makeAvailable() {
-        this.borrowed = false;
+        this.status = Status.AVAILABLE;
         this.borrowedTime = null;
-        this.reserved = false;
         this.reservedTime = null;
     }
 
